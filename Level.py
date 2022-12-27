@@ -2,6 +2,7 @@ import pygame
 from Settings import *
 from Tile import Tile
 from Player import Player
+from Weapon import Weapon
 
 class Level:
 
@@ -16,6 +17,8 @@ class Level:
         self.visible_sprites = CustomDrawAndCamera()
         self.obstacle_sprites = pygame.sprite.Group()
 
+        # attack sprite
+        self.current_attack = None
         # sprite set-up
         self.create_map()
 
@@ -29,9 +32,17 @@ class Level:
                 x = col_index * TILESIZE
                 y = row_index * TILESIZE
                 if col == 'x':
-                    Tile((x,y),[self.visible_sprites, self.obstacle_sprites])
+                    Tile((x,y),[self.obstacle_sprites])
                 if col == 'p':
-                    self.player = Player((x,y),[self.visible_sprites],self.obstacle_sprites)
+                    self.player = Player((x,y),[self.visible_sprites],self.obstacle_sprites,self.create_attack,self.destroy_weapon)
+
+    def create_attack(self):
+        self.current_attack = Weapon(self.player,[self.visible_sprites])
+
+    def destroy_weapon(self):
+        if self.current_attack:
+            self.current_attack.kill()
+        self.current_attack = None
 
 #------------------------------------------------------------------------------#
 #-----------------------------------Run Method---------------------------------#
@@ -53,13 +64,21 @@ class CustomDrawAndCamera(pygame.sprite.Group):
 
         self.offset = pygame.math.Vector2()
 
+        # Creating the floor on the map
+        self.floor_surf = pygame.image.load('Tiles/bakground.png').convert()
+        self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
+
     def custom_draw(self,player):
 
         # Getting the offset
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_height
 
-        for sprite in self.sprites():
+        # Draw the floor
+        floor_offset_pos = self.floor_rect.topleft - self.offset
+        self.display_surface.blit(self.floor_surf,floor_offset_pos)
+
+        for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery): # Ripted from internet, 
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image,offset_pos)
         
