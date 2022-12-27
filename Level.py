@@ -3,6 +3,7 @@ from Settings import *
 from Tile import Tile
 from Player import Player
 from Weapon import Weapon
+from Enemy import Enemy
 
 class Level:
 
@@ -33,8 +34,13 @@ class Level:
                 y = row_index * TILESIZE
                 if col == 'x':
                     Tile((x,y),[self.obstacle_sprites])
+
+                if col == 'e':
+                    self.enemy = Enemy((x,y),[self.visible_sprites],self.obstacle_sprites)
                 if col == 'p':
                     self.player = Player((x,y),[self.visible_sprites],self.obstacle_sprites,self.create_attack,self.destroy_weapon)
+
+
 
     def create_attack(self):
         self.current_attack = Weapon(self.player,[self.visible_sprites])
@@ -51,6 +57,7 @@ class Level:
     def run(self):
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
+        self.visible_sprites.enemy_update(self.player)
 
 
 # Make screen follw player, HARD TO FOLLOW...WEIRD MATH!
@@ -82,6 +89,9 @@ class CustomDrawAndCamera(pygame.sprite.Group):
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image,offset_pos)
         
-        
+    def enemy_update(self,player):
+        enemy_sprites = [sprite for sprite in self.sprites() if hasattr(sprite,'sprite_type') and sprite.sprite_type == 'enemy']
+        for enemy in enemy_sprites:
+            enemy.enemy_update(player)
         
         
