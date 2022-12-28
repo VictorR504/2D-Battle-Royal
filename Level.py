@@ -20,6 +20,9 @@ class Level:
 
         # attack sprite
         self.current_attack = None
+        self.attack_sprites = pygame.sprite.Group()
+        self.attackable_sprites = pygame.sprite.Group()
+
         # sprite set-up
         self.create_map()
 
@@ -36,19 +39,35 @@ class Level:
                     Tile((x,y),[self.obstacle_sprites])
 
                 if col == 'e':
-                    self.enemy = Enemy((x,y),[self.visible_sprites],self.obstacle_sprites)
+                    self.enemy = Enemy((x,y),[self.visible_sprites, self.attackable_sprites],self.obstacle_sprites,self.create_attack,self.destroy_weapon, self.damage_player)
+
                 if col == 'p':
                     self.player = Player((x,y),[self.visible_sprites],self.obstacle_sprites,self.create_attack,self.destroy_weapon)
 
 
 
     def create_attack(self):
-        self.current_attack = Weapon(self.player,[self.visible_sprites])
+        self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
 
     def destroy_weapon(self):
         if self.current_attack:
             self.current_attack.kill()
         self.current_attack = None
+
+    def player_attack_logic(self):
+        if self.attack_sprites:
+            for attack_sprite in self.attack_sprites:
+                collision_sprite = pygame.sprite.spritecollide(attack_sprite,self.attackable_sprites,False)
+                if collision_sprite:
+                    for target_sprite in collision_sprite:
+                        target_sprite.get_damage(self.player,attack_sprite.sprite_type)
+
+    def damage_player(self, amount, attack_type):
+        if self.player.vulnerable:
+            self.player.health -= amount
+            self.player.vulnerable = False
+            self.player.hurt_time = pygame.time.get_ticks()
+
 
 #------------------------------------------------------------------------------#
 #-----------------------------------Run Method---------------------------------#
@@ -58,6 +77,7 @@ class Level:
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
         self.visible_sprites.enemy_update(self.player)
+        self.player_attack_logic()
 
 
 # Make screen follw player, HARD TO FOLLOW...WEIRD MATH!

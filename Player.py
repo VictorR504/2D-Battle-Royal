@@ -20,6 +20,10 @@ class Player(Entity):
         # Graphics Setup
         self.import_player_assets()
         self.status = 'right'
+
+        # stats
+        self.health = 3
+        self.attack_damage = 1
       
 
         # Movment Setup
@@ -31,6 +35,11 @@ class Player(Entity):
         self.destroy_weapon = destroy_weapon
 
         self.obstacle_sprite = obstacle_sprite
+
+        # Getting attacked
+        self.vulnerable = True
+        self.hurt_time = None
+        self.invulnerability_duration = 500
         
 
 #------------------------------------------------------------------------------#
@@ -117,6 +126,10 @@ class Player(Entity):
                 self.attacking = False
                 self.destroy_weapon()
 
+        if not self.vulnerable:
+            if current_time - self.hurt_time >= self.invulnerability_duration:
+                self.vulnerable = True
+
     def animate(self):
         animation = self.animations[self.status]
 
@@ -130,6 +143,19 @@ class Player(Entity):
         self.image = animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center = self.hitbox.center)
 
+        # flicker
+        if not self.vulnerable:
+            alpha = self.wave_value()
+            self.image.set_alpha(alpha)
+        else:
+            self.image.set_alpha(255)
+
+        
+
+    def get_full_weapon_damage(self):
+        base_damage = self.attack_damage
+        weapon_damage = self.damage
+        return base_damage + weapon_damage
 
 #------------------------------------------------------------------------------#
 #-------------------------------------Update-----------------------------------#
