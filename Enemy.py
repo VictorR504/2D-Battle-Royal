@@ -3,7 +3,7 @@ from Entity import Entity
 from os import walk
 
 class Enemy(Entity):
-    def __init__(self, pos, groups,obstacle_sprite,create_attack,destroy_weapon,damage_player):
+    def __init__(self, pos, groups,obstacle_sprite,enemy_attack,stop_attacking,damage_player):
         super().__init__(groups)
         self.sprite_type = 'enemy'
         self.obstacle_sprite = obstacle_sprite
@@ -30,8 +30,8 @@ class Enemy(Entity):
         self.attack_cooldown = 400
         self.attack_time = None
 
-        self.create_attack = create_attack
-        self.destroy_weapon = destroy_weapon
+        self.enemy_attack = enemy_attack
+        self.stop_attacking = stop_attacking
 
         self.damage_player = damage_player
 
@@ -94,7 +94,7 @@ class Enemy(Entity):
     def actions(self,player):
         if self.status == 'attack':
             self.attack_time = pygame.time.get_ticks()
-            self.damage_player(self.attack_damage,self.create_attack())
+            self.damage_player(self.attack_damage)
             print('attack')
         elif self.status == 'move':
             self.direction = self.get_player_distance_direction(player)[1]

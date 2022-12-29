@@ -4,6 +4,7 @@ from Tile import Tile
 from Player import Player
 from Weapon import Weapon
 from Enemy import Enemy
+from EnemyAttack import Attack
 
 class Level:
 
@@ -20,6 +21,7 @@ class Level:
 
         # attack sprite
         self.current_attack = None
+        self.attacking_enemy = None
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
 
@@ -39,7 +41,7 @@ class Level:
                     Tile((x,y),[self.obstacle_sprites])
 
                 if col == 'e':
-                    self.enemy = Enemy((x,y),[self.visible_sprites, self.attackable_sprites],self.obstacle_sprites,self.create_attack,self.destroy_weapon, self.damage_player)
+                    self.enemy = Enemy((x,y),[self.visible_sprites, self.attackable_sprites],self.obstacle_sprites,self.enemy_attack,self.stop_attacking,self.damage_player)
 
                 if col == 'p':
                     self.player = Player((x,y),[self.visible_sprites],self.obstacle_sprites,self.create_attack,self.destroy_weapon)
@@ -48,6 +50,14 @@ class Level:
 
     def create_attack(self):
         self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
+
+    def enemy_attack(self):
+        self.attacking_enemy = Attack(self.enemy,[self.visible_sprites,self.attack_sprites])
+
+    def stop_attacking(self):
+        if self.attacking_enemy:
+            self.attacking_enemy.kill()
+        self.attacking_enemy = None
 
     def destroy_weapon(self):
         if self.current_attack:
@@ -62,7 +72,7 @@ class Level:
                     for target_sprite in collision_sprite:
                         target_sprite.get_damage(self.player,attack_sprite.sprite_type)
 
-    def damage_player(self, amount, attack_type):
+    def damage_player(self, amount):
         if self.player.vulnerable:
             self.player.health -= amount
             self.player.vulnerable = False

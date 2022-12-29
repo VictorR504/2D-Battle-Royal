@@ -111,7 +111,7 @@ class Player(Entity):
             self.direction.x = 0
 
         # Attack
-        if keys[pygame.K_SPACE] and not self.attacking:
+        if keys[pygame.K_RCTRL] and not self.attacking:
             self.attacking = True
             self.attack_time = pygame.time.get_ticks()
             self.create_attack()
