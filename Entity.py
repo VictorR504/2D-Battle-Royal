@@ -1,4 +1,5 @@
 import pygame
+from os import walk
 from math import sin
 
 class Entity(pygame.sprite.Sprite):
@@ -47,3 +48,15 @@ class Entity(pygame.sprite.Sprite):
             return 255
         else:
             return 0
+
+    def import_folder(self,path):
+        surface_list = []
+
+        for _,__,img_files in walk(path):
+            for image in img_files:
+                full_path = path + '/' + image
+                image_surf = pygame.image.load(full_path).convert_alpha()
+                surface_list.append(image_surf)
+
+        return surface_list
+

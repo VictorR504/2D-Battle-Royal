@@ -1,6 +1,5 @@
-import pygame
+import pygame, sys
 from Settings import *
-from os import walk
 from Entity import Entity
 
 class Player(Entity):
@@ -11,7 +10,7 @@ class Player(Entity):
 
     def __init__(self,pos,groups,obstacle_sprite,create_attack,destroy_weapon):
         super().__init__(groups)
-        self.image = pygame.image.load('Tiles/PlayerAnimation/player_idel.png').convert_alpha()
+        self.image = pygame.image.load('Tiles/PlayerAnimation/Player_Idle_Right_1.png').convert_alpha()
         #self.image = pygame.Surface((40,40))
         #self.image.fill('green')
         self.rect = self.image.get_rect(topleft = pos)
@@ -77,17 +76,7 @@ class Player(Entity):
             self.status = self.status.replace('_attack', '_idle')
 
 
-    def import_folder(self,path):
-        surface_list = []
-
-        for _,__,img_files in walk(path):
-            for image in img_files:
-                full_path = path + '/' + image
-                image_surf = pygame.image.load(full_path).convert_alpha()
-                surface_list.append(image_surf)
-
-        return surface_list
-
+    
     def input(self):
         keys = pygame.key.get_pressed()
 
@@ -115,6 +104,10 @@ class Player(Entity):
             self.attacking = True
             self.attack_time = pygame.time.get_ticks()
             self.create_attack()
+        
+        if keys[pygame.K_ESCAPE]:
+                    pygame.quit()
+                    sys.exit()
 
 
     def cooldowns(self):

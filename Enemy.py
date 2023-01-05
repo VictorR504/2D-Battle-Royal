@@ -20,14 +20,14 @@ class Enemy(Entity):
         # stats
         self.speed = 2
         self.attack_radius = 50
-        self.notice_radius = 700
+        self.notice_radius = 300
         self.health = 3
         self.resistans = 3
         self.attack_damage = 1
 
         # Attacking
         self.can_attack = True
-        self.attack_cooldown = 400
+        self.attack_cooldown = 600
         self.attack_time = None
 
         self.enemy_attack = enemy_attack
@@ -56,7 +56,7 @@ class Enemy(Entity):
 
 
     def import_graphics(self):
-        self.animations = {'idle': [], 'move':[], 'attack':[]}
+        self.animations = {'idle': [], 'move':[], 'attack':[], 'death':[]}
         main_path = f'Tiles/EnemyAnimation/'
         for animation in self.animations.keys():
             self.animations[animation] = self.import_folder(main_path + animation)
@@ -94,6 +94,7 @@ class Enemy(Entity):
     def actions(self,player):
         if self.status == 'attack':
             self.attack_time = pygame.time.get_ticks()
+            self.can_attack = False
             self.damage_player(self.attack_damage)
             print('attack')
         elif self.status == 'move':

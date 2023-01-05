@@ -1,6 +1,6 @@
 import pygame, sys
 from Settings import *
-from Level import Level
+from Gameplay import Gameplay
 
 #------------------------------------------------------------------------------#
 #-----------------------------Initialization-----------------------------------#
@@ -13,7 +13,7 @@ class Game:
         pygame.display.set_caption('CockFight')
         self.clock = pygame.time.Clock()
 
-        self.level = Level()
+        self.gameplay = Gameplay()
 
 #------------------------------------------------------------------------------#
 #---------------------------------Game Loop------------------------------------#
@@ -25,10 +25,9 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-
             
             self.screen.fill(('black'))
-            self.level.run()
+            self.gameplay.run()
             pygame.display.update()
             self.clock.tick(FPS)
      

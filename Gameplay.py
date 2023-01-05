@@ -6,7 +6,7 @@ from Weapon import Weapon
 from Enemy import Enemy
 from EnemyAttack import Attack
 
-class Level:
+class Gameplay:
 
 #------------------------------------------------------------------------------#
 #--------------------------------Constructor-----------------------------------#
@@ -89,6 +89,9 @@ class Level:
         self.visible_sprites.enemy_update(self.player)
         self.player_attack_logic()
 
+#------------------------------------------------------------------------------#
+#---------------------------------Draw and Camera------------------------------#
+#------------------------------------------------------------------------------#
 
 # Make screen follw player, HARD TO FOLLOW...WEIRD MATH!
 class CustomDrawAndCamera(pygame.sprite.Group):
@@ -102,7 +105,7 @@ class CustomDrawAndCamera(pygame.sprite.Group):
         self.offset = pygame.math.Vector2()
 
         # Creating the floor on the map
-        self.floor_surf = pygame.image.load('Tiles/bakground.png').convert()
+        self.floor_surf = pygame.image.load('Tiles/background/Level_One.png').convert()
         self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
     def custom_draw(self,player):
