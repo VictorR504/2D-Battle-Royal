@@ -10,7 +10,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH,HEIGTH))
-        pygame.display.set_caption('CockFight')
+        pygame.display.set_caption('Zombie Survival')
         self.clock = pygame.time.Clock()
 
         self.gameplay = Gameplay()
@@ -36,7 +36,6 @@ class Game:
 #---------------------------------Runs My Game---------------------------------#
 #------------------------------------------------------------------------------#
 
-if __name__ == '__main__':
-    game = Game()
-    game.run()
+game = Game()
+game.run()
 

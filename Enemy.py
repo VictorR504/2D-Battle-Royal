@@ -1,9 +1,8 @@
 import pygame 
 from Entity import Entity
-from os import walk
 
 class Enemy(Entity):
-    def __init__(self, pos, groups,obstacle_sprite,enemy_attack,stop_attacking,damage_player):
+    def __init__(self, pos, groups,obstacle_sprite,damage_player):
         super().__init__(groups)
         self.sprite_type = 'enemy'
         self.obstacle_sprite = obstacle_sprite
@@ -29,30 +28,12 @@ class Enemy(Entity):
         self.can_attack = True
         self.attack_cooldown = 600
         self.attack_time = None
-
-        self.enemy_attack = enemy_attack
-        self.stop_attacking = stop_attacking
-
         self.damage_player = damage_player
 
         # invincibillity timer
         self.vulnerble = True
         self.hit_time = None
         self.duration = 300
-
-
-    # reusing this method in two classes, add this tom 
-    def import_folder(self,path):
-            surface_list = []
-
-            for _,__,img_files in walk(path):
-                for image in img_files:
-                    full_path = path + '/' + image
-                    image_surf = pygame.image.load(full_path).convert_alpha()
-                    surface_list.append(image_surf)
-
-            return surface_list
-
 
 
     def import_graphics(self):
@@ -146,6 +127,9 @@ class Enemy(Entity):
     def cheack_death(self):
         if self.health <= 0:
             self.kill()
+    
+    def deathAnimation(self):
+        pass
             
     def hit_reaction(self):
         if not self.vulnerble:

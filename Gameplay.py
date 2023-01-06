@@ -4,7 +4,6 @@ from Tile import Tile
 from Player import Player
 from Weapon import Weapon
 from Enemy import Enemy
-from EnemyAttack import Attack
 
 class Gameplay:
 
@@ -14,18 +13,15 @@ class Gameplay:
 
     def __init__(self):
 
-        # get the display surface
-
+        # Sprite Groups
         self.visible_sprites = CustomDrawAndCamera()
         self.obstacle_sprites = pygame.sprite.Group()
-
-        # attack sprite
-        self.current_attack = None
-        self.attacking_enemy = None
         self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
-
-        # sprite set-up
+        # Arguments
+        self.current_attack = None
+        self.attacking_enemy = None
+        # Create Map and Objects
         self.create_map()
 
 #------------------------------------------------------------------------------#
@@ -41,28 +37,21 @@ class Gameplay:
                     Tile((x,y),[self.obstacle_sprites])
 
                 if col == 'e':
-                    self.enemy = Enemy((x,y),[self.visible_sprites, self.attackable_sprites],self.obstacle_sprites,self.enemy_attack,self.stop_attacking,self.damage_player)
+                    self.enemy = Enemy((x,y),[self.visible_sprites, self.attackable_sprites],self.obstacle_sprites,self.damage_player)
 
                 if col == 'p':
                     self.player = Player((x,y),[self.visible_sprites],self.obstacle_sprites,self.create_attack,self.destroy_weapon)
 
 
-
     def create_attack(self):
         self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
 
-    def enemy_attack(self):
-        self.attacking_enemy = Attack(self.enemy,[self.visible_sprites,self.attack_sprites])
-
-    def stop_attacking(self):
-        if self.attacking_enemy:
-            self.attacking_enemy.kill()
-        self.attacking_enemy = None
 
     def destroy_weapon(self):
         if self.current_attack:
             self.current_attack.kill()
         self.current_attack = None
+
 
     def player_attack_logic(self):
         if self.attack_sprites:
@@ -71,6 +60,7 @@ class Gameplay:
                 if collision_sprite:
                     for target_sprite in collision_sprite:
                         target_sprite.get_damage(self.player,attack_sprite.sprite_type)
+
 
     def damage_player(self, amount):
         if self.player.vulnerable:
@@ -108,6 +98,7 @@ class CustomDrawAndCamera(pygame.sprite.Group):
         self.floor_surf = pygame.image.load('Tiles/background/Level_One.png').convert()
         self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
+
     def custom_draw(self,player):
 
         # Getting the offset
@@ -121,7 +112,8 @@ class CustomDrawAndCamera(pygame.sprite.Group):
         for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery): # Ripted from internet, 
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image,offset_pos)
-        
+
+
     def enemy_update(self,player):
         enemy_sprites = [sprite for sprite in self.sprites() if hasattr(sprite,'sprite_type') and sprite.sprite_type == 'enemy']
         for enemy in enemy_sprites:

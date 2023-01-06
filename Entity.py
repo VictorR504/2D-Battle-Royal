@@ -11,9 +11,7 @@ class Entity(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2()
 
     def move(self,speed):
-        # Check i vector has a length..! 
-        if self.direction.magnitude() != 0:
-            # If it has a lenght, set it to 1
+        if self.direction.magnitude_squared() != 0:
             self.direction = self.direction.normalize() # If not, player will walk faster in a diagnal direction
 
     # Set speed and Checks for collisons...!

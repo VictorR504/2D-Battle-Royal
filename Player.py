@@ -11,19 +11,16 @@ class Player(Entity):
     def __init__(self,pos,groups,obstacle_sprite,create_attack,destroy_weapon):
         super().__init__(groups)
         self.image = pygame.image.load('Tiles/PlayerAnimation/Player_Idle_Right_1.png').convert_alpha()
-        #self.image = pygame.Surface((40,40))
-        #self.image.fill('green')
         self.rect = self.image.get_rect(topleft = pos)
         self.hitbox = self.rect.inflate(0,-20)
 
         # Graphics Setup
-        self.import_player_assets()
+        self.import_assets()
         self.status = 'right'
 
         # stats
         self.health = 3
         self.attack_damage = 1
-      
 
         # Movment Setup
         self.speed = 5
@@ -32,7 +29,6 @@ class Player(Entity):
         self.attack_time = None
         self.create_attack = create_attack
         self.destroy_weapon = destroy_weapon
-
         self.obstacle_sprite = obstacle_sprite
 
         # Getting attacked
@@ -45,7 +41,7 @@ class Player(Entity):
 #------------------------------------Methods-----------------------------------#
 #------------------------------------------------------------------------------#
 
-    def import_player_assets(self):
+    def import_assets(self):
         character_path = 'Tiles/PlayerAnimation/'
         self.animations = { 'right_idle': [], 'left_idle': [], 'right': [], 'left': [], 'left_attack': [], 'right_attack': [] }
 
@@ -53,11 +49,9 @@ class Player(Entity):
             full_path = character_path + animation
             self.animations[animation] = self.import_folder(full_path)
 
-        # print(self.animations)
 
     def get_status(self):
 
-        # idle 
         if self.direction.x == 0 and self.direction.y == 0:
             if not 'idle' in self.status and not 'attack' in self.status:
                 self.status = self.status + '_idle'
@@ -74,7 +68,6 @@ class Player(Entity):
         
         if self.attacking == False:
             self.status = self.status.replace('_attack', '_idle')
-
 
     
     def input(self):
@@ -126,29 +119,28 @@ class Player(Entity):
     def animate(self):
         animation = self.animations[self.status]
 
-        # loop over the frame index
         self.frame_index += self.animation_speed
         if self.frame_index >= len(animation):
             self.frame_index = 0
 
-        # set the image
-
         self.image = animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center = self.hitbox.center)
 
-        # flicker
+        # Get flickering effect ==> Google is your friend XD
         if not self.vulnerable:
             alpha = self.wave_value()
             self.image.set_alpha(alpha)
         else:
             self.image.set_alpha(255)
 
-        
-
     def get_full_weapon_damage(self):
         base_damage = self.attack_damage
         weapon_damage = self.damage
         return base_damage + weapon_damage
+
+    def cheack_death(self):
+        if self.health <= 0:
+            self.kill()
 
 #------------------------------------------------------------------------------#
 #-------------------------------------Update-----------------------------------#
@@ -160,3 +152,4 @@ class Player(Entity):
         self.cooldowns()
         self.animate()
         self.move(self.speed)
+        self.cheack_death()
