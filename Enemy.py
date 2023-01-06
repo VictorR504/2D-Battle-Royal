@@ -19,8 +19,8 @@ class Enemy(Entity):
         # stats
         self.speed = 2
         self.attack_radius = 50
-        self.notice_radius = 300
-        self.health = 3
+        self.notice_radius = 500
+        self.health = 1
         self.resistans = 3
         self.attack_damage = 1
 
@@ -35,13 +35,16 @@ class Enemy(Entity):
         self.hit_time = None
         self.duration = 300
 
+        # Death Animation == > Bullshit....why do it not work as the other timers......
+        self.can_move = True
+        self.IsAlive = True
+
 
     def import_graphics(self):
-        self.animations = {'idle': [], 'move':[], 'attack':[], 'death':[]}
+        self.animations = {'idle': [], 'move_right':[], 'move_left':[], 'attack':[], 'death':[], 'death_delux': []}
         main_path = f'Tiles/EnemyAnimation/'
         for animation in self.animations.keys():
             self.animations[animation] = self.import_folder(main_path + animation)
-
 
 
     def get_player_distance_direction(self,player):
@@ -57,19 +60,24 @@ class Enemy(Entity):
         return (distance,direction)
 
 
-
     def get_status(self,player):
         distance = self.get_player_distance_direction(player)[0]
+        direction = self.get_player_distance_direction(player)[1]
 
-        if distance <= self.attack_radius and self.can_attack:
+        if distance <= self.attack_radius and self.can_attack and self.IsAlive == True:
             if self.status != 'attack':
                 self.frame_index = 0
             self.status = 'attack'
-        elif distance <= self.notice_radius:
-            self.status = 'move'
+        elif distance <= self.notice_radius and self.IsAlive == True:
+            if direction.x == (self.rect.midright < player.rect.midleft):
+                self.status = 'move_right'
+            else:
+                self.status = 'move_left'
         else:
             self.status = 'idle'
-
+        
+        if self.IsAlive == False:
+            self.status = 'death_delux'
 
 
     def actions(self,player):
@@ -78,11 +86,12 @@ class Enemy(Entity):
             self.can_attack = False
             self.damage_player(self.attack_damage)
             print('attack')
-        elif self.status == 'move':
+            
+        elif self.status == 'move_right' and self.can_move == True or self.status == 'move_left' and self.can_move == True:
             self.direction = self.get_player_distance_direction(player)[1]
+        
         else:
             self.direction = pygame.math.Vector2()
-
 
 
     def animate(self):
@@ -103,13 +112,13 @@ class Enemy(Entity):
             self.image.set_alpha(255)
 
 
-
     def cooldown(self):
         current_time = pygame.time.get_ticks()
         
         if not self.can_attack:
             if current_time - self.attack_time >= self.attack_cooldown:
                 self.can_attack = True
+                print('attack ready')
 
         if not self.vulnerble:
             if current_time - self.hit_time >= self.duration:
@@ -124,13 +133,11 @@ class Enemy(Entity):
             self.hit_time = pygame.time.get_ticks()
             self.vulnerble = False
 
-    def cheack_death(self):
+    def check_death(self):
         if self.health <= 0:
-            self.kill()
+            self.can_move = False
+            self.IsAlive = False
     
-    def deathAnimation(self):
-        pass
-            
     def hit_reaction(self):
         if not self.vulnerble:
             self.direction *= - self.resistans
@@ -139,8 +146,8 @@ class Enemy(Entity):
         self.hit_reaction()
         self.move(self.speed)
         self.animate()
+        self.check_death()
         self.cooldown()
-        self.cheack_death()
 
     def enemy_update(self,player):
         self.get_status(player)

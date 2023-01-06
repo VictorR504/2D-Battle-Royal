@@ -23,7 +23,7 @@ class Player(Entity):
         self.attack_damage = 1
 
         # Movment Setup
-        self.speed = 5
+        self.speed = 3
         self.attacking = False
         self.attack_cooldown = 400
         self.attack_time = None
@@ -141,6 +141,7 @@ class Player(Entity):
     def cheack_death(self):
         if self.health <= 0:
             self.kill()
+            self.destroy_weapon()
 
 #------------------------------------------------------------------------------#
 #-------------------------------------Update-----------------------------------#
