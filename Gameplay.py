@@ -1,6 +1,7 @@
 import pygame
 from Settings import *
 from Objects import Tile
+from Objects import Grass
 from Player import Player
 from Weapon import Weapon
 from Enemy import Enemy
@@ -45,6 +46,7 @@ class Gameplay:
 
                 if col == 'p':
                     self.player = Player((x,y),[self.visible_sprites],self.obstacle_sprites,self.create_attack,self.destroy_weapon)
+                
 
 
     def create_attack(self):
