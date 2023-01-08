@@ -1,6 +1,6 @@
 import pygame
 from Settings import *
-from Tile import Tile
+from Objects import Tile
 from Player import Player
 from Weapon import Weapon
 from Enemy import Enemy
@@ -34,7 +34,11 @@ class Gameplay:
                 x = col_index * TILESIZE
                 y = row_index * TILESIZE
                 if col == 'x':
-                    Tile((x,y),[self.obstacle_sprites])
+                    Tile((x,y),'Tiles/objects/block.png',[self.obstacle_sprites])
+                if col == 'c':
+                    Tile((x,y),'Tiles/objects/cactus_1.png',[self.visible_sprites])
+                if col == 's':
+                    Tile((x,y),'Tiles/objects/sign_1.png',[self.visible_sprites])
 
                 if col == 'e':
                     self.enemy = Enemy((x,y),[self.visible_sprites, self.attackable_sprites],self.obstacle_sprites,self.damage_player)
@@ -44,7 +48,7 @@ class Gameplay:
 
 
     def create_attack(self):
-        self.current_attack = Weapon(self.player,[self.visible_sprites,self.attack_sprites])
+        self.current_attack = Weapon(self.player,[self.attack_sprites])
 
 
     def destroy_weapon(self):
@@ -95,7 +99,7 @@ class CustomDrawAndCamera(pygame.sprite.Group):
         self.offset = pygame.math.Vector2()
 
         # Creating the floor on the map
-        self.floor_surf = pygame.image.load('Tiles/background/Level_One.png').convert()
+        self.floor_surf = pygame.image.load('Tiles/background/resize_level_one.png').convert()
         self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 
 

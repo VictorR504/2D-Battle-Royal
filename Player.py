@@ -1,8 +1,8 @@
 import pygame, sys
 from Settings import *
-from Entity import Entity
+from Inheritance import inheritance
 
-class Player(Entity):
+class Player(inheritance):
 
 #------------------------------------------------------------------------------#
 #------------------------------------Constructor-------------------------------#

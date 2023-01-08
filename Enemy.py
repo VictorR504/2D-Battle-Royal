@@ -1,7 +1,7 @@
 import pygame 
-from Entity import Entity
+from Inheritance import inheritance
 
-class Enemy(Entity):
+class Enemy(inheritance):
     def __init__(self, pos, groups,obstacle_sprite,damage_player):
         super().__init__(groups)
         self.sprite_type = 'enemy'
@@ -10,7 +10,7 @@ class Enemy(Entity):
         # graphics setup
         self.import_graphics()
         self.status = 'idle'
-        self.image = pygame.image.load('Tiles/EnemyAnimation/idle/idle.png').convert_alpha()
+        self.image = pygame.image.load('Tiles/EnemyAnimation/idle/Zombie_Idle_Animation_01.png').convert_alpha()
 
         # movment
         self.rect = self.image.get_rect(topleft = pos)
